@@ -33,6 +33,8 @@ cd ~/.pi/agent && git pull
 ### Skills
 
 - **commit** — Conventional Commits-style git commits
+- **marimo-batch** — Prepare a marimo notebook for scheduled batch runs
+- **marimo-notebook** — Write marimo notebooks in the correct Python file format
 - **tmux** — Tmux session control via keystrokes and pane scraping
 - **uv** — uv for Python dependency management and script execution
 

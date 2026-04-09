@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Personal pi coding agent setup — extensions, skills, and intercepted commands",
   "keywords": ["pi-package"],
+  "dependencies": {
+    "diff": "*"
+  },
   "pi": {
     "extensions": ["extensions"],
     "skills": ["skills"]
