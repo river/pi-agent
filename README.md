@@ -32,3 +32,7 @@ Shell shims that block `pip`, `pip3`, `poetry` and redirect `python`/`python3` t
 - `pip` / `pip3` — blocked, suggests `uv add` / `uv run --with`
 - `poetry` — blocked, suggests `uv` equivalents
 - `python` / `python3` — blocks `-m pip`, `-m venv`, `-m py_compile`; otherwise delegates through `uv run`
+
+## Credits
+
+Most of this setup is derived from [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff).
