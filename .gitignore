@@ -1,5 +1,4 @@
 auth.json
 sessions/
-bin/fd
-bin/rg
+bin/
 node_modules/
