@@ -1,11 +1,11 @@
-# river-pi-setup
+# pi-setup
 
 Personal [pi](https://buildwithpi.ai/) coding agent configuration.
 
 ## Install
 
 ```bash
-pi install git:github.com/river/river-pi-setup
+pi install git:github.com/river/pi-setup
 ```
 
 ## What's included
