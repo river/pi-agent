@@ -25,7 +25,6 @@ cd ~/.pi/agent && git pull
 ### Extensions
 
 - **answer.ts** — Interactive TUI for answering questions one by one
-- **btw.ts** — Side-chat popover with optional summary injection
 - **files.ts** — File browser with git status and session references
 - **multi-edit.ts** — Batch edits and Codex-style patch support with preflight validation
 - **todos.ts** — Todo manager with file-backed storage and TUI
