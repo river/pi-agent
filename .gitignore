@@ -1,0 +1,4 @@
+auth.json
+sessions/
+bin/fd
+bin/rg

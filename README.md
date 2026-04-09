@@ -2,10 +2,22 @@
 
 Personal [pi](https://buildwithpi.ai/) coding agent configuration.
 
-## Install
+## Setup
+
+Clone this repo directly as `~/.pi/agent/` — pi auto-discovers everything from there.
+
+### Fresh machine
 
 ```bash
-pi install git:github.com/river/pi-agent
+mkdir -p ~/.pi
+git clone git@github.com:river/pi-agent.git ~/.pi/agent
+# Add your API keys to ~/.pi/agent/auth.json
+```
+
+### Updating
+
+```bash
+cd ~/.pi/agent && git pull
 ```
 
 ## What's included
