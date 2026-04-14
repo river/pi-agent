@@ -35,6 +35,11 @@ interface ExtractionResult {
 	questions: ExtractedQuestion[];
 }
 
+type ExtractionOutcome =
+	| { status: "ok"; result: ExtractionResult }
+	| { status: "cancelled" }
+	| { status: "error"; message: string };
+
 const SYSTEM_PROMPT = `You are a question extractor. Given text from a conversation, extract any questions that need answering.
 
 Output a JSON object with this structure:
@@ -67,7 +72,7 @@ Example output:
   ]
 }`;
 
-const CODEX_MODEL_ID = "gpt-5.1-codex-mini";
+const CODEX_MODEL_ID = "gpt-5.4-mini";
 const HAIKU_MODEL_ID = "claude-haiku-4-5";
 
 /**
@@ -449,9 +454,9 @@ export default function (pi: ExtensionAPI) {
 			const extractionModel = await selectExtractionModel(ctx.model, ctx.modelRegistry);
 
 			// Run extraction with loader UI
-			const extractionResult = await ctx.ui.custom<ExtractionResult | null>((tui, theme, _kb, done) => {
+			const extractionOutcome = await ctx.ui.custom<ExtractionOutcome>((tui, theme, _kb, done) => {
 				const loader = new BorderedLoader(tui, theme, `Extracting questions using ${extractionModel.id}...`);
-				loader.onAbort = () => done(null);
+				loader.onAbort = () => done({ status: "cancelled" });
 
 				const doExtract = async () => {
 					const auth = await ctx.modelRegistry.getApiKeyAndHeaders(extractionModel);
@@ -471,7 +476,7 @@ export default function (pi: ExtensionAPI) {
 					);
 
 					if (response.stopReason === "aborted") {
-						return null;
+						return { status: "cancelled" } satisfies ExtractionOutcome;
 					}
 
 					const responseText = response.content
@@ -479,20 +484,40 @@ export default function (pi: ExtensionAPI) {
 						.map((c) => c.text)
 						.join("\n");
 
-					return parseExtractionResult(responseText);
+					const parsed = parseExtractionResult(responseText);
+					if (!parsed) {
+						return {
+							status: "error",
+							message: "Question extraction returned invalid JSON. Try /answer again or switch to a different model.",
+						} satisfies ExtractionOutcome;
+					}
+
+					return { status: "ok", result: parsed } satisfies ExtractionOutcome;
 				};
 
 				doExtract()
 					.then(done)
-					.catch(() => done(null));
+					.catch((error: unknown) =>
+						done({
+							status: "error",
+							message: error instanceof Error ? error.message : "Question extraction failed",
+						}),
+					);
 
 				return loader;
 			});
 
-			if (extractionResult === null) {
+			if (extractionOutcome.status === "cancelled") {
 				ctx.ui.notify("Cancelled", "info");
 				return;
 			}
+
+			if (extractionOutcome.status === "error") {
+				ctx.ui.notify(extractionOutcome.message, "error");
+				return;
+			}
+
+			const extractionResult = extractionOutcome.result;
 
 			if (extractionResult.questions.length === 0) {
 				ctx.ui.notify("No questions found in the last message", "info");
